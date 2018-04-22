@@ -7,6 +7,90 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AddApiKey"></script>
+<script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+<!-- JS for getting google map loaded. source: videos from https://www.youtube.com/channel/UCkg_xpBf5gMSnBZx8uRG-yg -->
+<script>
+  var map;
+  var infoWindow;
+  
+  // Initialize Firebase
+  // TODO: Replace with your project's customized code snippet
+  var config = {
+    apiKey: "ADD API KEY",
+    authDomain: "restaurant-roulette-6f286.firebaseapp.com",
+    databaseURL: "https://restaurant-roulette-6f286.firebaseio.com",
+    projectId: "restaurant-roulette-6f286",
+    storageBucket: "restaurant-roulette-6f286.appspot.com",
+    messagingSenderId: "1063202666057"
+  };
+  firebase.initializeApp(config);
+  
+  //Loading in map.
+  function initialize() {
+    var center = new google.maps.LatLng(36.336403,-88.8855965);
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: center,
+      zoom: 15
+    });
+
+    //request for food places
+    var request = {
+      location: center,
+      radius: 8047,
+      types: ['restaurant']
+    };
+    infoWindow = new google.maps.InfoWindow();
+    var services = new google.maps.places.PlacesService(map);
+    services.nearbySearch(request, callback);
+  }
+
+  // Makes sure everything loaded
+  function callback(results, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK){
+      for (var i = 0; i < results.length; i++) {
+        createMarker(results[i]);
+      }
+    }
+  }
+
+  var placeName;
+
+  function createMarker(place) {
+    var placeLoc = place.geometry.location;
+    var marker = new google.maps.Marker({
+      map: map,
+      position: place.geometry.location
+    });
+    google.maps.event.addListener(marker, 'click', function() {
+      placeName = place.name;
+      infoWindow.setContent('<p>' + placeName + '</p>' +
+      '<button onclick="goHere()">Go Here!</button>');
+      infoWindow.open(map, this);
+    });
+  }
+
+  //Waits for load to call initialize.
+  google.maps.event.addDomListener(window, 'load', initialize);
+
+  function goHere(){
+    //Test values for now to see if it works.    
+    var email = "robcrayb@ut.utm.edu";
+    var image = "https://lh6.googleusercontent.com/-ewiRYkD6pOQ/AAAAAAAAAAI/AAAAAAAAAEw/dp5fVyHroDQ/s96-c/photo.jpg";
+    var mymessage = "I am going to " + placeName + "!";
+
+    var messageData = {
+      fromEmail: email,
+      fromImageURL: image,
+      message: mymessage
+    };
+    
+    var newMessageKey = firebase.database().ref().child('messages').push().key;
+    var updates = {};
+    updates['messages/' + newMessageKey] = messageData;
+    firebase.database().ref().update(updates);
+  }
+</script>
 </head>
 <body>
   <app-root></app-root>
