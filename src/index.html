@@ -93,11 +93,29 @@
       fromImageURL: image,
       message: mymessage
     };
+    var ref = firebase.database().ref().child('messages');
+    ref.push(messageData);
+    
+    
+/*
     var newMessageKey = firebase.database().ref().child('messages').push().key;
+    
     var updates = {};
-    updates['messages/' + newMessageKey] = messageData;
-    firebase.database().ref().update(updates);
+    updates['/messages/' + newMessageKey] = messageData;
+    firebase.database().ref().push(messageData);//update(updates);
+    
+    
+    // Import Admin SDK
+    /*var admin = require("firebase-admin");
+
+    // Get a database reference to our blog
+    var db = firebase.database();
+    var ref = db.ref("server/saving-data/messages");
+    var postsRef = ref.child("messages");
+    postsRef.push().set(messageData);
+    */
   }
+  
 </script>
 </head>
 <body>
