@@ -8,10 +8,12 @@
   <button *ngIf="currentUser" (click)="logout()">Logout: {{currentUser.displayName}}</button>
 
 </div>
-<div *ngIf="currentUser">
+<div class="row" style="padding-top: 5%;">
+<div *ngIf="currentUser" class="col-sm-6">
   <div class='message' *ngFor="let m of messages">
     <div class='imageHolder'><img class="image" [src]="m.fromImageURL"></div>
     From: {{m.fromEmail}}<br>{{m.message}}
   </div>
 </div>
-<div id="map" style="width: 500px; height: 500px;"></div>
+<div class="col-sm-5" id="map" style="width: 500px; height: 500px;"></div>
+</div>
