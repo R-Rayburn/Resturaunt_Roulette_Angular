@@ -4,121 +4,150 @@
   <meta charset="utf-8">
   <title>AngularResturauntRoulette</title>
   <base href="/">
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyD89C52Q-L0KzFyAz6uw_H8R0gkKxzwPkM"></script>
-<script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
-
-<!-- Scripts for using bootstrap.
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
--->
-
-<!-- JS for getting google map loaded. source: videos from https://www.youtube.com/channel/UCkg_xpBf5gMSnBZx8uRG-yg -->
-<script>
-  var map;
-  var infoWindow;
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyD89C52Q-L0KzFyAz6uw_H8R0gkKxzwPkM"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
   
-  // Initialize Firebase
-  // TODO: Replace with your project's customized code snippet
-  var config = {
-    apiKey: "AIzaSyAfKw0tB0QAXBU1DbrRxP5ugFRP8NGnXKE",
-    authDomain: "restaurant-roulette-6f286.firebaseapp.com",
-    databaseURL: "https://restaurant-roulette-6f286.firebaseio.com",
-    projectId: "restaurant-roulette-6f286",
-    storageBucket: "restaurant-roulette-6f286.appspot.com",
-    messagingSenderId: "1063202666057"
-  };
-  firebase.initializeApp(config);
+  <!-- Scripts for using bootstrap.
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  -->
   
-  //Loading in map.
-  function initialize() {
-    var center = new google.maps.LatLng(36.3388594,-88.8591623);
-    map = new google.maps.Map(document.getElementById('map'), {
-      center: center,
-      zoom: 14
-    });
-
-    //request for food places
-    var request = {
-      location: center,
-      radius: 8047,
-      types: ['restaurant']
+  <!-- JS for getting google map loaded. source: videos from https://www.youtube.com/channel/UCkg_xpBf5gMSnBZx8uRG-yg -->
+  <script>
+    var map;
+    var infoWindow;
+    
+    // Initialize Firebase
+    // TODO: Replace with your project's customized code snippet
+    var config = {
+      apiKey: "AIzaSyAfKw0tB0QAXBU1DbrRxP5ugFRP8NGnXKE",
+      authDomain: "restaurant-roulette-6f286.firebaseapp.com",
+      databaseURL: "https://restaurant-roulette-6f286.firebaseio.com",
+      projectId: "restaurant-roulette-6f286",
+      storageBucket: "restaurant-roulette-6f286.appspot.com",
+      messagingSenderId: "1063202666057"
     };
-    infoWindow = new google.maps.InfoWindow();
-    var services = new google.maps.places.PlacesService(map);
-    services.nearbySearch(request, callback);
-  }
+    firebase.initializeApp(config);
+    
+    // function _getBrowswerLocation(){
+    //   if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition(function(position) {
+    //       var pos = {
+    //         lat: position.coords.latitude,
+    //         lng: position.coords.longitude
+    //       };
+          
+    //     }
 
-  // Makes sure everything loaded
-  function callback(results, status) {
-    if (status == google.maps.places.PlacesServiceStatus.OK){
-      for (var i = 0; i < results.length; i++) {
-        createMarker(results[i]);
+    var latitude, longitude;
+        
+      function _getBrowswerLocation(){
+        if(navigator.geolocation){
+          navigator.geolocation.getCurrentPosition(function (position){
+            
+              latitude = position.coords.latitude;
+              longitude = position.coords.longitude;
+              console.log(latitude);
+              console.log(longitude);
+            
+          });
+        }
       }
-    }
-  }
 
-  var placeName;
-
-  function createMarker(place) {
-    var placeLoc = place.geometry.location;
-    var marker = new google.maps.Marker({
-      map: map,
-      position: place.geometry.location
-    });
-    google.maps.event.addListener(marker, 'click', function() {
-      placeName = place.name;
-      infoWindow.setContent('<p>' + placeName + '</p>' +
-      '<button onclick="goHere()">Go Here!</button>');
-      infoWindow.open(map, this);
-    });
-  }
-
-  //Waits for load to call initialize.
-  google.maps.event.addDomListener(window, 'load', initialize);
-
-  function goHere(){
-    //Test values for now to see if it works.    
-    var email = "robcrayb@ut.utm.edu";
-    var image = "https://lh6.googleusercontent.com/-ewiRYkD6pOQ/AAAAAAAAAAI/AAAAAAAAAEw/dp5fVyHroDQ/s96-c/photo.jpg";
-    var mymessage = "I am going to " + placeName + "!";
+        //Loading in map.
+        function initialize() {
+          
+          _getBrowswerLocation();
+          
+          var center = new google.maps.LatLng(latitude, longitude);
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: center,
+            zoom: 14
+          });
+          
+          //request for food places
+          var request = {
+            location: center,
+            radius: 8047,
+            types: ['restaurant']
+          };
+          infoWindow = new google.maps.InfoWindow();
+          var services = new google.maps.places.PlacesService(map);
+          services.nearbySearch(request, callback);
+        }
+        
+        // Makes sure everything loaded
+        function callback(results, status) {
+          if (status == google.maps.places.PlacesServiceStatus.OK){
+            for (var i = 0; i < results.length; i++) {
+              createMarker(results[i]);
+            }
+          }
+        }
+        
+        var placeName;
+        
+        function createMarker(place) {
+          var placeLoc = place.geometry.location;
+          var marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location
+          });
+          google.maps.event.addListener(marker, 'click', function() {
+            placeName = place.name;
+            infoWindow.setContent('<p>' + placeName + '</p>' +
+            '<button onclick="goHere()">Go Here!</button>');
+            infoWindow.open(map, this);
+          });
+        }
+        
+        //Waits for load to call initialize.
+        google.maps.event.addDomListener(window, 'load', initialize);
+        
+        function goHere(){
+          //Test values for now to see if it works.    
+          var email = "robcrayb@ut.utm.edu";
+          var image = "https://lh6.googleusercontent.com/-ewiRYkD6pOQ/AAAAAAAAAAI/AAAAAAAAAEw/dp5fVyHroDQ/s96-c/photo.jpg";
+          var mymessage = "I am going to " + placeName + "!";
+          
+          var messageData = {
+            fromEmail: email,
+            fromImageURL: image,
+            message: mymessage
+          };
+          var ref = firebase.database().ref().child('messages');
+          ref.push(messageData);
+          
+          
+          /*
+          var newMessageKey = firebase.database().ref().child('messages').push().key;
+          
+          var updates = {};
+          updates['/messages/' + newMessageKey] = messageData;
+          firebase.database().ref().push(messageData);//update(updates);
+          
+          
+          // Import Admin SDK
+          /*var admin = require("firebase-admin");
+          
+          // Get a database reference to our blog
+          var db = firebase.database();
+          var ref = db.ref("server/saving-data/messages");
+          var postsRef = ref.child("messages");
+          postsRef.push().set(messageData);
+          */
+        }
+        
+      </script>
+    </head>
+    <body>
+      <app-root></app-root>
+    </body>
+    </html>
     
-    var messageData = {
-      fromEmail: email,
-      fromImageURL: image,
-      message: mymessage
-    };
-    var ref = firebase.database().ref().child('messages');
-    ref.push(messageData);
-    
-    
-/*
-    var newMessageKey = firebase.database().ref().child('messages').push().key;
-    
-    var updates = {};
-    updates['/messages/' + newMessageKey] = messageData;
-    firebase.database().ref().push(messageData);//update(updates);
-    
-    
-    // Import Admin SDK
-    /*var admin = require("firebase-admin");
-
-    // Get a database reference to our blog
-    var db = firebase.database();
-    var ref = db.ref("server/saving-data/messages");
-    var postsRef = ref.child("messages");
-    postsRef.push().set(messageData);
-    */
-  }
-  
-</script>
-</head>
-<body>
-  <app-root></app-root>
-</body>
-</html>
