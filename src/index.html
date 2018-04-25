@@ -45,109 +45,85 @@
           
     //     }
 
-    var latitude, longitude;
+    var latitude = 36.3388594, longitude = -88.8591623;
         
-      function _getBrowswerLocation(){
-        if(navigator.geolocation){
-          navigator.geolocation.getCurrentPosition(function (position){
-            
-              latitude = position.coords.latitude;
-              longitude = position.coords.longitude;
-              console.log(latitude);
-              console.log(longitude);
-            
-          });
-        }
-        else{
-          alert("Cannot get your location. Default to Martin, TN.");
-          latitude = 36.3388594;
-          longitude = -88.8591623;
-        }
+    function _getBrowswerLocation(){
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(function (position){    
+          latitude = position.coords.latitude;
+          longitude = position.coords.longitude;
+          console.log(latitude);
+          console.log(longitude);  
+        });
+       } else {
+        alert("Cannot get your location. Default to Martin, TN.");
       }
-
-        //Loading in map.
-        function initialize() {
+    }
+    //Loading in map.
+    function initialize() {      
+      // _getBrowswerLocation();
+      
+      var center = new google.maps.LatLng(latitude, longitude);
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: center,
+        zoom: 14
+      });
           
-          _getBrowswerLocation();
-          
-          var center = new google.maps.LatLng(latitude, longitude);
-          map = new google.maps.Map(document.getElementById('map'), {
-            center: center,
-            zoom: 14
-          });
-          
-          //request for food places
-          var request = {
-            location: center,
-            radius: 8047,
-            types: ['restaurant']
-          };
-          infoWindow = new google.maps.InfoWindow();
-          var services = new google.maps.places.PlacesService(map);
-          services.nearbySearch(request, callback);
-        }
+      //request for food places
+      var request = {
+        location: center,
+        radius: 8047,
+        types: ['restaurant']
+      };
+      infoWindow = new google.maps.InfoWindow();
+        var services = new google.maps.places.PlacesService(map);
+        services.nearbySearch(request, callback);
+      }
         
-        // Makes sure everything loaded
-        function callback(results, status) {
-          if (status == google.maps.places.PlacesServiceStatus.OK){
-            for (var i = 0; i < results.length; i++) {
-              createMarker(results[i]);
-            }
+      // Makes sure everything loaded
+      function callback(results, status) {
+        if (status == google.maps.places.PlacesServiceStatus.OK){
+          for (var i = 0; i < results.length; i++) {
+            createMarker(results[i]);
           }
         }
+      }
         
-        var placeName;
+      var placeName;
         
-        function createMarker(place) {
-          var placeLoc = place.geometry.location;
-          var marker = new google.maps.Marker({
-            map: map,
-            position: place.geometry.location
-          });
-          google.maps.event.addListener(marker, 'click', function() {
-            placeName = place.name;
-            infoWindow.setContent('<p>' + placeName + '</p>' +
-            '<button onclick="goHere()">Go Here!</button>');
-            infoWindow.open(map, this);
-          });
-        }
+      function createMarker(place) {
+        var placeLoc = place.geometry.location;
+        var marker = new google.maps.Marker({
+          map: map,
+          position: place.geometry.location
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+          placeName = place.name;
+          infoWindow.setContent('<p>' + placeName + '</p>' +
+          '<button onclick="goHere()">Go Here!</button>');
+          infoWindow.open(map, this);
+        });
+      }
         
-        //Waits for load to call initialize.
-        google.maps.event.addDomListener(window, 'load', initialize);
+      //Waits for load to call initialize.
+      google.maps.event.addDomListener(window, 'load', initialize);
+      
+      function goHere(){
+        //Test values for now to see if it works.    
+        var email = "robcrayb@ut.utm.edu";
+        var image = "https://lh6.googleusercontent.com/-ewiRYkD6pOQ/AAAAAAAAAAI/AAAAAAAAAEw/dp5fVyHroDQ/s96-c/photo.jpg";
+        var mymessage = "I am going to " + placeName + "!";
+        var ref = firebase.database().ref().child('messages');
+        //var key = ref.key;
+        var messageData = {
+          //id: key,
+          fromEmail: email,
+          fromImageURL: image,
+          message: mymessage
+        };      
+        ref.push(messageData);    
+      }
         
-        function goHere(){
-          //Test values for now to see if it works.    
-          var email = "robcrayb@ut.utm.edu";
-          var image = "https://lh6.googleusercontent.com/-ewiRYkD6pOQ/AAAAAAAAAAI/AAAAAAAAAEw/dp5fVyHroDQ/s96-c/photo.jpg";
-          var mymessage = "I am going to " + placeName + "!";
-          
-          var messageData = {
-            fromEmail: email,
-            fromImageURL: image,
-            message: mymessage
-          };
-          var ref = firebase.database().ref().child('messages');
-          ref.push(messageData);
-          
-          
-          /*
-          var newMessageKey = firebase.database().ref().child('messages').push().key;
-          
-          var updates = {};
-          updates['/messages/' + newMessageKey] = messageData;
-          firebase.database().ref().push(messageData);//update(updates);
-          
-          
-          // Import Admin SDK
-          /*var admin = require("firebase-admin");
-          
-          // Get a database reference to our blog
-          var db = firebase.database();
-          var ref = db.ref("server/saving-data/messages");
-          var postsRef = ref.child("messages");
-          postsRef.push().set(messageData);
-          */
-        }
         
       </script>
     </head>
